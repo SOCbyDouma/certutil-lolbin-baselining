@@ -1,0 +1,36 @@
+<!--
+  Lab-only Sysmon config v2: logs ONLY certutil.exe activity.
+  Adds EID 22 (DNS query) to attribute connections by hostname, and
+  EID 5 (process terminate) scoped to certutil to remove system-wide noise.
+  Deliberately narrow for a clean lab signal. NOT suitable for production.
+  Apply to a running Sysmon with:  Sysmon64.exe -c sysmon-certutil-v2.xml
+-->
+<Sysmon schemaversion="4.90">
+  <EventFiltering>
+    <RuleGroup groupRelation="or">
+      <ProcessCreate onmatch="include">
+        <Image condition="image">certutil.exe</Image>
+      </ProcessCreate>
+    </RuleGroup>
+    <RuleGroup groupRelation="or">
+      <ProcessTerminate onmatch="include">
+        <Image condition="image">certutil.exe</Image>
+      </ProcessTerminate>
+    </RuleGroup>
+    <RuleGroup groupRelation="or">
+      <NetworkConnect onmatch="include">
+        <Image condition="image">certutil.exe</Image>
+      </NetworkConnect>
+    </RuleGroup>
+    <RuleGroup groupRelation="or">
+      <FileCreate onmatch="include">
+        <Image condition="image">certutil.exe</Image>
+      </FileCreate>
+    </RuleGroup>
+    <RuleGroup groupRelation="or">
+      <DnsQuery onmatch="include">
+        <Image condition="image">certutil.exe</Image>
+      </DnsQuery>
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon>

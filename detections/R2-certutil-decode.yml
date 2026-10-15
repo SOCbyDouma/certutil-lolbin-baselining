@@ -1,0 +1,31 @@
+title: Certutil Used to Decode Data
+id: 8a3e5d27-1f4b-4e9c-b6d0-2c8f7a4e1b02
+status: experimental
+description: |
+  Detects certutil.exe invoked with -decode or -decodehex (dash or slash prefix).
+  Attackers deliver payloads as base64 text to evade network inspection and decode them
+  on the host. In the lab, this behavior generated no network telemetry and was not
+  blocked by Microsoft Defender, even when the output file was named .exe.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+  - https://attack.mitre.org/techniques/T1140/
+author: DhyeyV
+date: 2026-10-15
+tags:
+  - attack.defense_evasion
+  - attack.t1140
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith: '\certutil.exe'
+    - OriginalFileName: 'CertUtil.exe'
+  selection_verb:
+    CommandLine|contains:
+      - '-decode'
+      - '/decode'
+  condition: all of selection_*
+falsepositives:
+  - Some software installers and admin scripts decode bundled certificates or data
+level: medium

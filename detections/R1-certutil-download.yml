@@ -1,0 +1,35 @@
+title: Certutil Used to Download a Remote File
+id: 4f0c8b1e-6a2d-4c55-9e1a-1b7d2f3a9c01
+status: experimental
+description: |
+  Detects certutil.exe invoked with URL-fetching verbs (urlcache, verifyctl) together with
+  an http/https URL. This is the classic LOLBIN ingress-tool-transfer pattern.
+  Lab baseline showed that legitimate certutil network activity (e.g. -generateSSTFromWU)
+  never includes these verbs or an explicit URL on the command line.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+  - https://attack.mitre.org/techniques/T1105/
+author: DhyeyV
+date: 2026-10-15
+tags:
+  - attack.command_and_control
+  - attack.t1105
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith: '\certutil.exe'
+    - OriginalFileName: 'CertUtil.exe'
+  selection_verb:
+    CommandLine|contains:
+      - 'urlcache'
+      - 'verifyctl'
+  selection_url:
+    CommandLine|contains:
+      - 'http://'
+      - 'https://'
+  condition: all of selection_*
+falsepositives:
+  - Rare administrative scripts that fetch certificates or CRLs by URL
+level: high

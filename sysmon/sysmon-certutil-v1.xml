@@ -1,0 +1,24 @@
+<!--
+  Lab-only Sysmon config v1: logs ONLY certutil.exe activity.
+  EID 1 (process create), EID 3 (network connect), EID 11 (file create).
+  Deliberately narrow for a clean lab signal. NOT suitable for production.
+-->
+<Sysmon schemaversion="4.90">
+  <EventFiltering>
+    <RuleGroup groupRelation="or">
+      <ProcessCreate onmatch="include">
+        <Image condition="image">certutil.exe</Image>
+      </ProcessCreate>
+    </RuleGroup>
+    <RuleGroup groupRelation="or">
+      <NetworkConnect onmatch="include">
+        <Image condition="image">certutil.exe</Image>
+      </NetworkConnect>
+    </RuleGroup>
+    <RuleGroup groupRelation="or">
+      <FileCreate onmatch="include">
+        <Image condition="image">certutil.exe</Image>
+      </FileCreate>
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon>

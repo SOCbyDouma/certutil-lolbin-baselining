@@ -1,0 +1,39 @@
+title: Certutil Created an Executable or Script File
+id: c71d9e40-5b8a-4f13-a2e6-3d9b8c5f0e03
+status: experimental
+description: |
+  Detects certutil.exe writing a file with an executable or script extension.
+  certutil is a certificate tool and has little legitimate reason to create these.
+  Catches both download and decode abuse at the moment the payload lands on disk,
+  regardless of which command-line verb or obfuscation was used.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+  - https://attack.mitre.org/techniques/T1105/
+  - https://attack.mitre.org/techniques/T1140/
+author: DhyeyV
+date: 2026-10-15
+tags:
+  - attack.command_and_control
+  - attack.t1105
+  - attack.defense_evasion
+  - attack.t1140
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\certutil.exe'
+    TargetFilename|endswith:
+      - '.exe'
+      - '.dll'
+      - '.ps1'
+      - '.bat'
+      - '.cmd'
+      - '.vbs'
+      - '.js'
+      - '.hta'
+      - '.scr'
+  condition: selection
+falsepositives:
+  - Unlikely
+level: high
